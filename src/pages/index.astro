@@ -1,0 +1,137 @@
+---
+import Layout from "../components/Layout.astro";
+---
+
+<Layout title="Natale semplice · Home">
+  <section
+    style="
+      display:flex;
+      flex-direction:column;
+      gap:1.8rem;
+      max-width:760px;
+      position:relative;
+      z-index:1;
+    "
+  >
+    <header style="display:flex; flex-direction:column; gap:0.6rem;">
+      <p style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.18em; color:#9ca3af;">
+        Benvenuto
+      </p>
+      <h1
+        style="
+          font-size:clamp(1.9rem, 3vw, 2.3rem);
+          line-height:1.2;
+          color:#111827;
+        "
+      >
+        Un angolo di <span style="color:#e11d48;">Natale</span> semplice, con neve leggera e piccole luci.
+      </h1>
+      <p style="font-size:0.95rem; color:#4b5563; max-width:36rem;">
+        Qui trovi un calendario dell'Avvento più curato, con caselle luminose e suggerimenti delicati,
+        e una lettera a Babbo Natale che assomiglia davvero a una cartolina delle feste.
+      </p>
+      <div style="display:flex; gap:0.6rem; font-size:1.3rem; margin-top:0.2rem;">
+        <span>🎄</span>
+        <span>🎅</span>
+        <span>🦌</span>
+        <span>✨</span>
+      </div>
+    </header>
+
+    <section
+      style="
+        display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+        gap:1.2rem;
+      "
+    >
+      <a
+        href="/calendario"
+        style="
+          text-decoration:none;
+          color:inherit;
+        "
+      >
+        <div
+          style="
+            background:linear-gradient(135deg, #fefce8, #fee2e2);
+            border-radius:18px;
+            padding:1.2rem 1.3rem;
+            border:1px solid rgba(248, 113, 113, 0.35);
+            box-shadow:0 10px 30px rgba(248, 113, 113, 0.25);
+            display:flex;
+            flex-direction:column;
+            gap:0.6rem;
+          "
+        >
+          <div style="font-size:1.6rem;">📅✨</div>
+          <h2 style="font-size:1.05rem; color:#111827;">Calendario dell'Avvento</h2>
+          <p style="font-size:0.9rem; color:#4b5563;">
+            Ventiquattro caselle luminose, con idee semplici per dare colore ai tuoi giorni di dicembre.
+          </p>
+          <span
+            style="
+              margin-top:0.2rem;
+              font-size:0.8rem;
+              color:#b91c1c;
+              font-weight:500;
+            "
+          >
+            Apri il calendario →
+          </span>
+        </div>
+      </a>
+
+      <a
+        href="/lettera"
+        style="
+          text-decoration:none;
+          color:inherit;
+        "
+      >
+        <div
+          style="
+            background:#ffffff;
+            border-radius:18px;
+            padding:1.2rem 1.3rem;
+            border:1px solid #e5e7eb;
+            box-shadow:0 10px 30px rgba(148, 163, 184, 0.25);
+            display:flex;
+            flex-direction:column;
+            gap:0.6rem;
+          "
+        >
+          <div style="font-size:1.6rem;">💌🎄</div>
+          <h2 style="font-size:1.05rem; color:#111827;">Lettera a Babbo Natale</h2>
+          <p style="font-size:0.9rem; color:#4b5563;">
+            Una pagina che ricorda la carta da lettere delle feste, con i bordi colorati e un timbro del Polo Nord.
+          </p>
+          <span
+            style="
+              margin-top:0.2rem;
+              font-size:0.8rem;
+              color:#16a34a;
+              font-weight:500;
+            "
+          >
+            Vai alla lettera →
+          </span>
+        </div>
+      </a>
+    </section>
+
+    <section
+      style="
+        margin-top:0.2rem;
+        font-size:0.85rem;
+        color:#6b7280;
+        max-width:36rem;
+      "
+    >
+      <p>
+        Il design resta pulito e chiaro, ma con qualche piccolo dettaglio: neve che cade, colori morbidi,
+        icone natalizie e un'atmosfera più calda.
+      </p>
+    </section>
+  </section>
+</Layout>

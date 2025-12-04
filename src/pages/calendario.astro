@@ -1,0 +1,411 @@
+---
+import Layout from "../components/Layout.astro";
+---
+
+<Layout title="Natale semplice · Calendario dell'Avvento">
+  <style>
+    #calendar-grid {
+      display: grid;
+      gap: 0.6rem;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    @media (max-width: 800px) {
+      #calendar-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      #calendar-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .advent-cell-text {
+      font-size: 0.8rem;
+      color: #4b5563;
+      margin-top: 0.35rem;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 640px) {
+      .advent-cell-text {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+
+  <section
+    style="
+      display:flex;
+      flex-direction:column;
+      gap:1.4rem;
+      max-width:880px;
+      margin-inline:auto;
+      position:relative;
+      z-index:1;
+    "
+  >
+    <header style="display:flex; flex-direction:column; gap:0.4rem;">
+      <div style="display:flex; align-items:center; gap:0.6rem; font-size:0.9rem; color:#9ca3af;">
+        <span>⭐</span>
+        <span>Calendario dell'Avvento</span>
+      </div>
+      <h1 style="font-size:1.5rem; color:#111827;">Ogni giorno, un piccolo gesto di gentilezza.</h1>
+      <p style="font-size:0.9rem; color:#4b5563; max-width:36rem;">
+        Ventiquattro caselle leggermente illuminate: dietro ogni numero trovi un suggerimento per vivere
+        questo periodo in modo più calmo e umano. Se accedi con Google, il tuo calendario viene salvato su Firebase.
+      </p>
+      <div
+        id="auth-badge-cal"
+        style="
+          margin-top:0.5rem;
+          font-size:0.8rem;
+          display:inline-flex;
+          align-items:center;
+          gap:0.4rem;
+          padding:0.3rem 0.7rem;
+          border-radius:999px;
+          border:1px solid #e5e7eb;
+          background:#f9fafb;
+          color:#4b5563;
+        "
+      >
+        <span id="auth-status-label-cal">Stato accesso…</span>
+        <button
+          type="button"
+          id="auth-action-btn-cal"
+          style="
+            border:none;
+            background:none;
+            color:#e11d48;
+            cursor:pointer;
+            font-size:0.8rem;
+            text-decoration:underline;
+          "
+        >
+          Accedi con Google
+        </button>
+      </div>
+    </header>
+
+    <div
+      style="
+        display:flex;
+        gap:1.4rem;
+        align-items:flex-start;
+        flex-wrap:wrap;
+      "
+    >
+      <div
+        id="calendar-card"
+        style="
+          flex:1.4;
+          min-width:260px;
+          background:linear-gradient(135deg, #fefce8, #fee2e2);
+          border-radius:22px;
+          padding:1.3rem 1.4rem;
+          border:1px solid rgba(248, 113, 113, 0.3);
+          box-shadow:0 12px 32px rgba(248, 113, 113, 0.25);
+          position:relative;
+          overflow:hidden;
+        "
+      >
+        <div
+          style="
+            position:absolute;
+            inset:0;
+            opacity:0.14;
+            pointer-events:none;
+            background-image:
+              radial-gradient(circle at 10% 10%, #fb7185 0, transparent 60%),
+              radial-gradient(circle at 90% 80%, #22c55e 0, transparent 60%);
+          "
+        ></div>
+        <div style="position:relative; z-index:1;">
+          <div id="calendar-grid">
+            <!-- Celle generate da script -->
+          </div>
+          <p style="margin-top:0.9rem; font-size:0.8rem; color:#4b5563;">
+            Suggerimento: apri una casella al giorno, a partire dal 1° dicembre.
+            Se sei collegato, il tuo progresso viene salvato nel tuo profilo.
+          </p>
+          <p id="calendar-sync-status" style="margin-top:0.3rem; font-size:0.75rem; color:#9ca3af;"></p>
+        </div>
+      </div>
+
+      <aside
+        style="
+          flex:1;
+          min-width:220px;
+          background:#ffffff;
+          border-radius:18px;
+          padding:1rem 1.1rem;
+          border:1px solid #e5e7eb;
+          box-shadow:0 8px 26px rgba(148, 163, 184, 0.25);
+          display:flex;
+          flex-direction:column;
+          gap:0.6rem;
+        "
+      >
+        <div style="font-size:1.4rem;">🎅🦌🎁</div>
+        <p style="font-size:0.9rem; color:#4b5563;">
+          Immagina Babbo Natale e le renne che si preparano alla partenza, gli alberi addobbati
+          e le luci che si accendono una alla volta. Ogni piccolo gesto che fai qui può diventare
+          parte di quella luce.
+        </p>
+        <p style="font-size:0.85rem; color:#6b7280;">
+          Non è necessario completare tutto: anche solo una casella può essere un buon inizio.
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <script type="module">
+    import {
+      subscribeToAuth,
+      signInWithGooglePopup,
+      signOutUser,
+      saveAdventStateForUser,
+      getAdventStateForUser
+    } from "/src/firebaseClient";
+
+    const messages = [
+      "Inizia il mese scrivendo tre cose per cui sei grato.",
+      "Condividi un sorriso con qualcuno che incontri oggi.",
+      "Fai un complimento sincero a una persona cara.",
+      "Prenditi cinque minuti per respirare profondamente e rallentare.",
+      "Sistema un piccolo angolo di casa per renderlo più accogliente.",
+      "Rileggi un ricordo felice dell'anno che sta finendo.",
+      "Scegli qualcosa che non usi più e pensi di poter donare.",
+      "Scrivi un messaggio gentile a qualcuno che non senti da tempo.",
+      "Ascolta una canzone di Natale a volume basso mentre ti rilassi.",
+      "Prepara una bevanda calda e gustala con calma.",
+      "Metti un post-it con una frase positiva in un posto visibile.",
+      "Apri la finestra per qualche minuto e osserva il cielo.",
+      "Accendi una candela e goditi la luce per un momento.",
+      "Scrivi un pensiero per una persona che non c'è più ma porti nel cuore.",
+      "Concediti una breve passeggiata, anche solo in casa.",
+      "Fai qualcosa di gentile senza dirlo a nessuno.",
+      "Ritaglia o disegna una piccola decorazione e appendila.",
+      "Metti da parte una moneta o una piccola somma da donare.",
+      "Spegni le notifiche per un po' e fai qualcosa che ti fa stare bene.",
+      "Ringrazia qualcuno per qualcosa di semplice ma importante.",
+      "Scegli un profumo che ti ricordi il Natale (un tè, una spezia, un dolce).",
+      "Rileggi le caselle che ti sono piaciute di più finora.",
+      "Prenditi un momento per immaginare il Natale ideale per te.",
+      "È la vigilia: respira, osserva intorno a te e goditi l'attesa in silenzio."
+    ];
+
+    const LOCAL_KEY = "clean_advent_opened_days_v2";
+    let openedSet = new Set();
+    const cells = new Map();
+    let currentUser = null;
+    let isSyncing = false;
+
+    function applyStateToCell(cell, day) {
+      const isOpen = openedSet.has(day);
+      const textEl = cell.querySelector(".advent-cell-text");
+      if (!textEl) return;
+
+      if (isOpen) {
+        cell.style.background = "rgba(254, 242, 242, 0.9)";
+        cell.style.boxShadow = "0 8px 22px rgba(248, 113, 113, 0.25)";
+        textEl.textContent = messages[day - 1] || "";
+      } else {
+        cell.style.background = "rgba(249, 250, 251, 0.96)";
+        cell.style.boxShadow = "none";
+        textEl.textContent = "";
+      }
+    }
+
+    function updateAllCellsFromState() {
+      for (const [day, cell] of cells.entries()) {
+        applyStateToCell(cell, day);
+      }
+    }
+
+    function persistLocal() {
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(Array.from(openedSet)));
+    }
+
+    async function persistRemote() {
+      if (!currentUser || isSyncing) return;
+      try {
+        isSyncing = true;
+        const statusEl = document.getElementById("calendar-sync-status");
+        if (statusEl) {
+          statusEl.textContent = "Salvataggio del calendario in corso…";
+        }
+        await saveAdventStateForUser(
+          currentUser.uid,
+          Array.from(openedSet.values()).sort((a, b) => a - b)
+        );
+        if (statusEl) {
+          statusEl.textContent = "Calendario salvato nel tuo profilo.";
+        }
+      } catch (err) {
+        console.error(err);
+        const statusEl = document.getElementById("calendar-sync-status");
+        if (statusEl) {
+          statusEl.textContent = "Impossibile salvare il calendario adesso.";
+        }
+      } finally {
+        isSyncing = false;
+      }
+    }
+
+    function buildCalendarBase() {
+      const grid = document.getElementById("calendar-grid");
+      if (!grid) return;
+
+      const openedFromStorage = JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
+      openedSet = new Set(openedFromStorage);
+
+      for (let day = 1; day <= 24; day++) {
+        const cell = document.createElement("button");
+        cell.type = "button";
+        cell.dataset.day = String(day);
+        cell.style.borderRadius = "16px";
+        cell.style.border = "1px solid rgba(148, 163, 184, 0.5)";
+        cell.style.padding = "0.8rem 0.8rem";
+        cell.style.minHeight = "86px";
+        cell.style.display = "flex";
+        cell.style.flexDirection = "column";
+        cell.style.alignItems = "flex-start";
+        cell.style.justifyContent = "space-between";
+        cell.style.cursor = "pointer";
+        cell.style.font = "inherit";
+        cell.style.backdropFilter = "blur(6px)";
+        cell.style.transition =
+          "background 0.16s ease-out, transform 0.16s ease-out, box-shadow 0.16s ease-out, border-color 0.16s ease-out";
+        cell.setAttribute("aria-label", "Apri il giorno " + day);
+
+        const topRow = document.createElement("div");
+        topRow.style.display = "flex";
+        topRow.style.alignItems = "center";
+        topRow.style.justifyContent = "space-between";
+        topRow.style.width = "100%";
+
+        const num = document.createElement("div");
+        num.textContent = String(day).padStart(2, "0");
+        num.style.fontWeight = "600";
+        num.style.fontSize = "0.9rem";
+        num.style.color = "#111827";
+
+        const dot = document.createElement("div");
+        dot.textContent = "✶";
+        dot.style.fontSize = "0.9rem";
+        dot.style.color = "#f97316";
+
+        const text = document.createElement("div");
+        text.className = "advent-cell-text";
+
+        topRow.appendChild(num);
+        topRow.appendChild(dot);
+        cell.appendChild(topRow);
+        cell.appendChild(text);
+
+        cell.addEventListener("mouseenter", () => {
+          cell.style.transform = "translateY(-2px)";
+          cell.style.boxShadow = "0 10px 26px rgba(148, 163, 184, 0.3)";
+        });
+
+        cell.addEventListener("mouseleave", () => {
+          cell.style.transform = "translateY(0)";
+          applyStateToCell(cell, day);
+        });
+
+        cell.addEventListener("click", () => {
+          if (openedSet.has(day)) {
+            openedSet.delete(day);
+          } else {
+            openedSet.add(day);
+          }
+          applyStateToCell(cell, day);
+          persistLocal();
+          if (currentUser) {
+            void persistRemote();
+          }
+        });
+
+        cells.set(day, cell);
+        grid.appendChild(cell);
+      }
+
+      updateAllCellsFromState();
+    }
+
+    function setupAuthBadge() {
+      const label = document.getElementById("auth-status-label-cal");
+      const btn = document.getElementById("auth-action-btn-cal");
+      const syncStatus = document.getElementById("calendar-sync-status");
+      if (!label || !btn) return;
+
+      subscribeToAuth(async (user) => {
+        currentUser = user;
+        if (user) {
+          label.textContent = user.email
+            ? `Collegato come ${user.email}.`
+            : "Collegato.";
+          btn.textContent = "Esci";
+          if (syncStatus) {
+            syncStatus.textContent = "Recupero del tuo calendario…";
+          }
+          try {
+            const days = await getAdventStateForUser(user.uid);
+            if (days && Array.isArray(days)) {
+              openedSet = new Set(days);
+              persistLocal();
+              updateAllCellsFromState();
+              if (syncStatus) {
+                syncStatus.textContent = "Calendario sincronizzato dal tuo profilo.";
+              }
+            } else if (syncStatus) {
+              syncStatus.textContent = "";
+            }
+          } catch (err) {
+            console.error(err);
+            if (syncStatus) {
+              syncStatus.textContent = "Impossibile caricare il calendario salvato.";
+            }
+          }
+        } else {
+          label.textContent = "Non sei collegato.";
+          btn.textContent = "Accedi con Google";
+          if (syncStatus) {
+            syncStatus.textContent =
+              "Stai usando un calendario locale. Accedi per salvarlo nel tuo profilo.";
+          }
+        }
+      });
+
+      btn.addEventListener("click", async () => {
+        if (currentUser) {
+          await signOutUser();
+        } else {
+          try {
+            await signInWithGooglePopup();
+          } catch (err) {
+            console.error(err);
+            if (syncStatus) {
+              syncStatus.textContent = "Errore durante l'accesso.";
+            }
+          }
+        }
+      });
+    }
+
+    function init() {
+      buildCalendarBase();
+      setupAuthBadge();
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  </script>
+</Layout>

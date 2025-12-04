@@ -1,0 +1,297 @@
+---
+const { title = "Natale" } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        --bg: #f4f5fb;
+        --surface: #ffffff;
+        --border-subtle: #e1e3ee;
+        --accent-red: #e11d48;
+        --accent-green: #16a34a;
+        --accent-soft: #fee2e2;
+        --text-main: #111827;
+        --text-muted: #6b7280;
+        --radius-lg: 18px;
+        --shadow-soft: 0 14px 45px rgba(15, 23, 42, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: radial-gradient(circle at top, #fef2f2 0, #f4f5fb 42%, #e5e7eb 100%);
+        color: var(--text-main);
+        display: flex;
+        justify-content: center;
+        padding: 1.5rem;
+      }
+
+      .shell {
+        width: 100%;
+        max-width: 1100px;
+        min-height: min(780px, 100vh - 3rem);
+        background: var(--surface);
+        border-radius: 24px;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid var(--border-subtle);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+      }
+
+      header.app-header {
+        padding: 1.2rem 1.8rem;
+        border-bottom: 1px solid var(--border-subtle);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.2rem;
+        background: linear-gradient(to right, #ffffff, #fef2f2);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 0, #fef9c3 0, #22c55e 40%, #16a34a 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #f9fafb;
+        font-size: 1.4rem;
+        box-shadow: 0 10px 22px rgba(34, 197, 94, 0.4);
+      }
+
+      .brand-text {
+        display: flex;
+        flex-direction: column;
+        gap: 0.1rem;
+      }
+
+      .brand-title {
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+      }
+
+      .brand-subtitle {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 0.85rem;
+      }
+
+      nav a {
+        text-decoration: none;
+        color: var(--text-muted);
+        padding: 0.45rem 0.8rem;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      nav a[data-active="true"] {
+        color: var(--accent-red);
+        background: var(--accent-soft);
+        border-color: rgba(248, 113, 113, 0.35);
+      }
+
+      nav a:hover {
+        background: #f3f4f6;
+      }
+
+      main.app-main {
+        flex: 1;
+        padding: 1.8rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.4rem;
+        background:
+          radial-gradient(circle at top left, #fefce8 0, transparent 50%),
+          radial-gradient(circle at bottom right, #ecfdf5 0, transparent 55%);
+        position: relative;
+        z-index: 1;
+      }
+
+      .bg-ornaments {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.18;
+      }
+
+      .bg-ornaments-inner {
+        width: 100%;
+        height: 100%;
+        background-image:
+          radial-gradient(circle at 12% 20%, #fee2e2 0, transparent 55%),
+          radial-gradient(circle at 85% 30%, #dcfce7 0, transparent 55%),
+          radial-gradient(circle at 20% 80%, #e0f2fe 0, transparent 55%);
+      }
+
+      @media (max-width: 720px) {
+        header.app-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        main.app-main {
+          padding: 1.4rem;
+        }
+      }
+
+      footer.app-footer {
+        padding: 0.9rem 1.8rem 1.2rem;
+        border-top: 1px solid var(--border-subtle);
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        display: flex;
+        justify-content: space-between;
+        gap: 0.8rem;
+        background:#f9fafb;
+      }
+
+      .footer-accent {
+        color: var(--accent-red);
+        font-weight: 600;
+      }
+
+      /* neve tipo coriandoli */
+
+      .snow-layer {
+        position: absolute;
+        pointer-events: none;
+        inset: 0;
+        overflow: hidden;
+        z-index: 0;
+      }
+
+      .snowflake {
+        position: absolute;
+        top: -10%;
+        color: #e5e7eb;
+        opacity: 0.95;
+        font-size: 0.9rem;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+      }
+
+      @keyframes snowFall {
+        0% {
+          transform: translate3d(0, -10%, 0);
+        }
+        100% {
+          transform: translate3d(0, 120%, 0);
+        }
+      }
+
+      @keyframes snowDrift {
+        0% {
+          margin-left: 0;
+        }
+        50% {
+          margin-left: 18px;
+        }
+        100% {
+          margin-left: -14px;
+        }
+      }
+
+      @keyframes snowSpin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="snow-layer" id="snow-layer"></div>
+
+      <header class="app-header">
+        <div class="brand">
+          <div class="brand-mark">🎄</div>
+          <div class="brand-text">
+            <div class="brand-title">Natale semplice</div>
+            <div class="brand-subtitle">Un tocco di festa, senza esagerare</div>
+          </div>
+        </div>
+        <nav>
+          <a href="/" data-active={Astro.url.pathname === "/"}>🏠 Home</a>
+          <a href="/calendario" data-active={Astro.url.pathname.startsWith("/calendario")}>📅 Calendario</a>
+          <a href="/lettera" data-active={Astro.url.pathname.startsWith("/lettera")}>💌 Lettera</a>
+        </nav>
+      </header>
+
+      <main class="app-main">
+        <div class="bg-ornaments">
+          <div class="bg-ornaments-inner"></div>
+        </div>
+        <slot />
+      </main>
+
+      <footer class="app-footer">
+        <span>© {new Date().getFullYear()} Natale semplice.</span>
+        <span>Creato con <span class="footer-accent">cura</span> e un po' di neve ✨</span>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        const layer = document.getElementById("snow-layer");
+        if (!layer) return;
+        const count = 80; // più fiocchi, effetto coriandoli
+        for (let i = 0; i < count; i++) {
+          const el = document.createElement("div");
+          el.className = "snowflake";
+          el.textContent = Math.random() < 0.7 ? "✻" : "❄";
+
+          const size = 10 + Math.random() * 10;
+          const left = Math.random() * 100;
+          const fallDuration = 10 + Math.random() * 12; // più veloci
+          const driftDuration = fallDuration + 4;
+          const delay = -Math.random() * fallDuration;
+
+          el.style.left = left + "%";
+          el.style.fontSize = size + "px";
+
+          el.style.animationName = "snowFall, snowDrift";
+          el.style.animationDuration = fallDuration + "s, " + driftDuration + "s";
+          el.style.animationDelay = delay + "s, " + delay + "s";
+
+          layer.appendChild(el);
+        }
+      })();
+    </script>
+  </body>
+</html>

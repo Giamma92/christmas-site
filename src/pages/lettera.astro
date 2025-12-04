@@ -1,0 +1,348 @@
+---
+import Layout from "../components/Layout.astro";
+---
+
+<Layout title="Natale semplice · Lettera a Babbo Natale">
+  <section
+    style="
+      max-width:760px;
+      margin-inline:auto;
+      display:flex;
+      flex-direction:column;
+      gap:1.4rem;
+      position:relative;
+      z-index:1;
+    "
+  >
+    <header style="display:flex; flex-direction:column; gap:0.4rem;">
+      <div style="display:flex; align-items:center; gap:0.6rem; font-size:0.9rem; color:#9ca3af;">
+        <span>💌</span>
+        <span>Lettera a Babbo Natale</span>
+      </div>
+      <h1 style="font-size:1.5rem; color:#111827;">Scrivi una lettera con calma e gentilezza.</h1>
+      <p style="font-size:0.9rem; color:#4b5563; max-width:36rem;">
+        Accedi con Google per collegare la lettera al tuo profilo. Viene salvata su Firebase come un piccolo
+        ricordo di questo Natale.
+      </p>
+      <div
+        id="auth-badge"
+        style="
+          margin-top:0.4rem;
+          font-size:0.8rem;
+          display:inline-flex;
+          align-items:center;
+          gap:0.4rem;
+          padding:0.3rem 0.7rem;
+          border-radius:999px;
+          border:1px solid #e5e7eb;
+          background:#f9fafb;
+          color:#4b5563;
+        "
+      >
+        <span id="auth-status-label">Controllo stato accesso…</span>
+        <button
+          type="button"
+          id="auth-action-btn"
+          style="
+            border:none;
+            background:none;
+            color:#e11d48;
+            cursor:pointer;
+            font-size:0.8rem;
+            text-decoration:underline;
+          "
+        >
+          Accedi con Google
+        </button>
+      </div>
+    </header>
+
+    <section
+      style="
+        background:repeating-linear-gradient(
+          -55deg,
+          #fecaca,
+          #fecaca 6px,
+          #fef2f2 6px,
+          #fef2f2 12px
+        );
+        padding:1.1rem;
+        border-radius:22px;
+        box-shadow:0 12px 32px rgba(248, 113, 113, 0.25);
+      "
+    >
+      <div
+        style="
+          background:#fffbeb;
+          border-radius:18px;
+          padding:1.3rem 1.4rem;
+          border:1px solid #fef3c7;
+          box-shadow:inset 0 0 0 1px rgba(254, 243, 199, 0.7);
+          position:relative;
+          overflow:hidden;
+        "
+      >
+        <div
+          style="
+            position:absolute;
+            inset:0;
+            pointer-events:none;
+            opacity:0.2;
+            background-image:
+              radial-gradient(circle at 10% 10%, #fecaca 0, transparent 60%),
+              radial-gradient(circle at 90% 90%, #bfdbfe 0, transparent 60%);
+          "
+        ></div>
+        <div style="position:relative; z-index:1;">
+          <div
+            style="
+              display:flex;
+              justify-content:space-between;
+              align-items:flex-start;
+              gap:0.8rem;
+              margin-bottom:0.9rem;
+            "
+          >
+            <div style="display:flex; flex-direction:column; gap:0.1rem;">
+              <span style="font-size:0.8rem; color:#9ca3af;">Dal salotto di</span>
+              <span style="font-size:1rem; font-weight:600; color:#b91c1c;">Natale semplice</span>
+            </div>
+            <div
+              style="
+                border-radius:10px;
+                border:1px dashed #f97316;
+                padding:0.25rem 0.5rem;
+                font-size:0.7rem;
+                background:#fffbeb;
+                display:flex;
+                flex-direction:column;
+                align-items:center;
+                gap:0.1rem;
+              "
+            >
+              <span style="font-size:1.1rem;">🎅</span>
+              <span>Polo Nord</span>
+            </div>
+          </div>
+
+          <form
+            id="letter-form"
+            style="
+              display:flex;
+              flex-direction:column;
+              gap:0.9rem;
+            "
+          >
+            <div style="display:flex; flex-direction:column; gap:0.25rem;">
+              <label
+                for="childName"
+                style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.16em; color:#6b7280;"
+              >
+                Il tuo nome
+              </label>
+              <input
+                id="childName"
+                name="childName"
+                type="text"
+                required
+                placeholder="Es. Sofia, 7 anni"
+                style="
+                  border-radius:10px;
+                  border:1px solid #e5e7eb;
+                  padding:0.6rem 0.7rem;
+                  font:inherit;
+                  outline:none;
+                  background:#fefce8;
+                "
+              />
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:0.35rem;">
+              <span style="font-family: 'Georgia', ui-serif; font-size:0.95rem; color:#374151;">
+                Caro Babbo Natale,
+              </span>
+              <textarea
+                id="wishList"
+                name="wishList"
+                required
+                placeholder="quest'anno vorrei raccontarti..."
+                style="
+                  border-radius:10px;
+                  border:1px solid #e5e7eb;
+                  padding:0.7rem 0.8rem;
+                  font:inherit;
+                  outline:none;
+                  background:#fffbeb;
+                  min-height:160px;
+                  resize:vertical;
+                  line-height:1.5;
+                "
+              ></textarea>
+              <span
+                style="
+                  align-self:flex-end;
+                  font-family: 'Georgia', ui-serif;
+                  font-size:0.9rem;
+                  color:#374151;
+                "
+              >
+                con affetto,
+              </span>
+            </div>
+
+            <div
+              style="
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                gap:0.6rem;
+                flex-wrap:wrap;
+                margin-top:0.4rem;
+              "
+            >
+              <button
+                type="submit"
+                id="letter-submit-btn"
+                disabled
+                style="
+                  border:none;
+                  border-radius:999px;
+                  padding:0.6rem 1.4rem;
+                  font-size:0.9rem;
+                  font-weight:500;
+                  background:linear-gradient(135deg, #16a34a, #22c55e);
+                  color:#f9fafb;
+                  cursor:pointer;
+                  box-shadow:0 10px 26px rgba(22, 163, 74, 0.4);
+                "
+              >
+                Accedi per inviare ✨
+              </button>
+              <p style="font-size:0.8rem; color:#6b7280; max-width:260px;">
+                La tua lettera viene salvata su Firebase come se fosse una piccola cartolina digitale.
+              </p>
+            </div>
+
+            <p
+              id="status"
+              aria-live="polite"
+              style="font-size:0.8rem; min-height:1.2em; color:#6b7280; margin-top:0.1rem;"
+            ></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <script type="module">
+    import {
+      subscribeToAuth,
+      signInWithGooglePopup,
+      signOutUser,
+      saveLetterToFirestore
+    } from "/src/firebaseClient";
+
+    let currentUser = null;
+
+    function setupAuth() {
+      const label = document.getElementById("auth-status-label");
+      const btn = document.getElementById("auth-action-btn");
+      const submitBtn = document.getElementById("letter-submit-btn");
+      const status = document.getElementById("status");
+
+      if (!label || !btn || !submitBtn || !status) return;
+
+      subscribeToAuth((user) => {
+        currentUser = user;
+        if (user) {
+          label.textContent = user.email
+            ? `Collegato come ${user.email}.`
+            : "Collegato.";
+          btn.textContent = "Esci";
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Invia la lettera 🎄";
+          status.textContent = "";
+          status.style.color = "#6b7280";
+        } else {
+          label.textContent = "Non sei collegato.";
+          btn.textContent = "Accedi con Google";
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Accedi per inviare ✨";
+        }
+      });
+
+      btn.addEventListener("click", async () => {
+        if (currentUser) {
+          await signOutUser();
+          status.textContent = "Hai effettuato l'uscita. Puoi rientrare quando vuoi.";
+          status.style.color = "#6b7280";
+        } else {
+          try {
+            await signInWithGooglePopup();
+            status.textContent = "Accesso effettuato con successo!";
+            status.style.color = "#16a34a";
+          } catch (err) {
+            console.error(err);
+            status.textContent = "Si è verificato un errore durante l'accesso.";
+            status.style.color = "#e11d48";
+          }
+        }
+      });
+    }
+
+    function setupForm() {
+      const form = document.getElementById("letter-form");
+      const status = document.getElementById("status");
+
+      if (!form || !status) return;
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const nameInput = document.getElementById("childName");
+        const wishInput = document.getElementById("wishList");
+        const name = nameInput ? nameInput.value.trim() : "";
+        const text = wishInput ? wishInput.value.trim() : "";
+
+        if (!name || !text) {
+          status.textContent = "Compila sia il nome che la lettera.";
+          status.style.color = "#e11d48";
+          return;
+        }
+
+        if (!currentUser) {
+          status.textContent = "Per inviare la lettera devi accedere con Google.";
+          status.style.color = "#e11d48";
+          return;
+        }
+
+        try {
+          await saveLetterToFirestore({
+            name,
+            text,
+            userUid: currentUser.uid,
+            userEmail: currentUser.email || null
+          });
+          form.reset();
+          status.textContent = "La tua lettera è stata salvata per Babbo Natale. 🎅";
+          status.style.color = "#16a34a";
+        } catch (err) {
+          console.error(err);
+          status.textContent = "Si è verificato un errore nel salvataggio. Riprova.";
+          status.style.color = "#e11d48";
+        }
+      });
+    }
+
+    function init() {
+      setupAuth();
+      setupForm();
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  </script>
+</Layout>
