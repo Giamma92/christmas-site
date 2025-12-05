@@ -1,3 +1,5 @@
+packages:
+  - .            # obbligatorio per un workspace valido
 ignoredBuiltDependencies:
   - esbuild
   - sharp
