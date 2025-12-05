@@ -2,8 +2,8 @@ name: Deploy to Firebase Hosting
 
 on:
   push:
-    branches: [ main ]   # ← change if your default branch is different
-  workflow_dispatch:      # allow manual runs
+    branches: [ main ]        # cambia se il branch principale è diverso
+  workflow_dispatch:          # permette il run manuale
 
 jobs:
   build-and-deploy:
@@ -12,27 +12,29 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - name: Set up PNPM
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
+
       - name: Use Node 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
-      - name: Install deps
-        run: pnpm install --frozen-lockfile
-      - name: Build site (Astro → dist/)
-        run: pnpm run build 
+          cache: npm          
 
-      # Deploy to Firebase Hosting using the official action
+      - name: Install deps
+        # se hai un package-lock.json usa npm ci, altrimenti puoi usare npm install
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Build site (Astro → dist/)
+        run: npm run build
+
       - name: Deploy to Firebase Hosting (production)
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}                # keeps previews linked to commits/PRs
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CHRISTMAS_SITE_PULCI }}
-          channelId: live                                       # deploys to live site
-          projectId: christmas-site-pulci                            # ← REPLACE
-
-
+          channelId: live
+          projectId: christmas-site-pulci
