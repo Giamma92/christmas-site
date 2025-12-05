@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "astro": "^5.16.4",
-    "firebase": "^11.0.0"
+    "firebase": "^11.0.0",
+    "firebase-tools": "^14.27.0"
   }
 }
